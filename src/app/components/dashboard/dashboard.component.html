@@ -1,0 +1,118 @@
+<div class="dashboard">
+  <div class="charts">
+    <div class="charts__pie">
+      <ngx-charts-pie-chart
+        [view]="[765, 400]"
+        [scheme]="colorScheme"
+        [legendPosition]="legendPosition"
+        [results]="iocs"
+        [gradient]="true"
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="false"
+        (select)="onPieTypeSelected($event)"
+      >
+      </ngx-charts-pie-chart>
+    </div>
+    <div class="charts__chart">
+      <button *ngIf="iocsPerYear.length"
+              (click)="iocsPerMonth.length ? iocsPerMonth = [] : iocsPerYear = []"
+              mat-button color="accent"
+              class="back-btn">Назад
+      </button>
+      <div *ngIf="iocsPerMonth.length"
+           @fadeListIn
+           @fadeListOut
+           class="charts__month-list">
+        <mat-list>
+          <ng-container *ngFor="let listItem of iocsPerMonth">
+            <mat-list-item [routerLink]="'/ioc/' + listItem.id">
+              <mat-icon matListItemIcon color="accent">{{ IOC_TYPE_ICON[listItem.type] }}</mat-icon>
+              <div matListItemTitle class="white-text cursor-pointer">{{ listItem.type }}</div>
+              <div matListItemLine class="white-text cursor-pointer">{{ listItem.ioc }}</div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </ng-container>
+        </mat-list>
+      </div>
+      <ngx-charts-bar-vertical
+        [view]="[715, 460]"
+        [results]="iocsPerYear.length ? iocsPerYear : iocsPerYears"
+        [gradient]="true"
+        [showGridLines]="false"
+        [xAxis]="true"
+        [yAxis]="true"
+        scheme="fire"
+        (select)="onYearSelected($event)">
+      </ngx-charts-bar-vertical>
+    </div>
+  </div>
+
+  <div class="search">
+    <mat-form-field class="search__form" color="primary">
+      <mat-label>Поиск...</mat-label>
+      <input matInput type="text" [(ngModel)]="searchQuery">
+      <button matSuffix mat-icon-button aria-label="Search" (click)="loadByQuery()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div class="lists">
+    <ng-container *ngFor="let list of selectedIocLists; let index = index">
+      <mat-card
+        *ngIf="expandedListIndex === null || index === expandedListIndex"
+        [ngClass]="{
+          'lists__card_lighted': lightedList === list.type,
+          'lists__card_expanded': expandedListIndex === index
+        }"
+        @fadeCardIn @fadeCardOut
+        class="lists__card"
+      >
+        <mat-card-header>
+          <div mat-card-avatar>
+            <mat-icon color="primary">{{ IOC_TYPE_ICON[list.type] }}</mat-icon>
+          </div>
+          <mat-card-title>{{list.type}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list [ngClass]="{ 'expanded-list': expandedListIndex === index }">
+            <cdk-virtual-scroll-viewport orientation="vertical" itemSize="50" class="lists__card-viewport">
+              <ng-container *ngIf="expandedListIndex === index; else cutList">
+                <table>
+                  <tbody>
+                  <ng-container *cdkVirtualFor="let listItem of (list.iocs.length / 4 | numToArray); let index = index">
+                    <tr>
+                      <td *ngFor="let i of (4 | numToArray)">
+                        <mat-list-item [routerLink]="'/ioc/' + list.iocs[index + i].id">
+                          <div class="cursor-pointer">{{ list.iocs[index + i].ioc }}</div>
+                        </mat-list-item>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  </tbody>
+                </table>
+              </ng-container>
+              <ng-template #cutList>
+                <ng-container *cdkVirtualFor="let listItem of list.iocs.slice(0, 8)">
+                  <mat-list-item [routerLink]="'/ioc/' + listItem.id">
+                    <div class="cursor-pointer">{{ listItem.ioc }}</div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                </ng-container>
+              </ng-template>
+            </cdk-virtual-scroll-viewport>
+          </mat-list>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            *ngIf="list.iocs.length > 8"
+            mat-button color="primary"
+            (click)="expandedListIndex = expandedListIndex === null ? index : null">
+            {{ expandedListIndex === null ? 'Еще' : 'Скрыть' }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </ng-container>
+  </div>
+</div>

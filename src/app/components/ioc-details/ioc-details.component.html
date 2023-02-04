@@ -1,0 +1,42 @@
+<div class="ioc">
+  <mat-grid-list cols="4" rowHeight="100px" gutterSize="8px" class="grid-list">
+    <mat-grid-tile
+      *ngFor="let tile of tiles; let index = index"
+      class="grid-tile"
+      [colspan]="tile.cols"
+      [rowspan]="tile.rows"
+      [@leftFade]="index === 0 ? 'readyLeft' : ''"
+      [@topFade]="index === 1 ? 'readyTop' : ''"
+      [@rightFade]="index === 2 ? 'readyRight' : ''"
+      [@bottomFade]="index === 3 ? 'readyBottom' : ''"
+      [style.background]="tile.color">
+      <ng-container *ngIf="index === 0; else usualText">
+        <mat-icon>{{ IOC_TYPE_ICON[tile.text] }}</mat-icon>
+      </ng-container>
+      <ng-template #usualText>{{tile.text}}</ng-template>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div *ngIf="iocInfo" class="table-wrapper" @tableFade>
+    <table>
+      <tbody>
+        <tr>
+          <td>Article title</td>
+          <td class="offset">{{iocInfo.article.title}}</td>
+        </tr>
+        <tr>
+          <td>Publication date</td>
+          <td class="offset">{{iocInfo.article.date}}</td>
+        </tr>
+        <tr>
+          <td>Source</td>
+          <td class="offset"><a href="{{ iocInfo.article.link }}" target="_blank">{{iocInfo.article.link}}</a></td>
+        </tr>
+        <tr>
+          <td>IOCs found in this source</td>
+          <td class="offset">{{iocInfo.article.ioc_count}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
