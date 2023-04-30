@@ -20,6 +20,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {MatGridListModule} from "@angular/material/grid-list";
+import { EncodeURIComponentPipe } from './shared/pipes/encode-uricomponent.pipe';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {MatGridListModule} from "@angular/material/grid-list";
     DashboardComponent,
     IocDetailsComponent,
     DateNumToNamePipe,
-    NumToArrayPipe
+    NumToArrayPipe,
+    EncodeURIComponentPipe
   ],
   imports: [
     BrowserModule,

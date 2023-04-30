@@ -28,15 +28,28 @@
           <td>Publication date</td>
           <td class="offset">{{iocInfo.article.date}}</td>
         </tr>
+        <tr *ngIf="iocInfo?.article?.filename !== NO_FILES">
+          <td>File name</td>
+          <td class="offset">{{iocInfo.article.filename}}</td>
+        </tr>
         <tr>
           <td>Source</td>
-          <td class="offset"><a href="{{ iocInfo.article.link }}" target="_blank">{{iocInfo.article.link}}</a></td>
+          <td class="offset"><a href="{{ iocInfo.article.link + '#:~:text=' + (iocInfo.ioc.ioc_around | encodeURIComponent) }}" target="_blank">{{iocInfo.article.link}}</a></td>
         </tr>
         <tr>
           <td>IOCs found in this source</td>
           <td class="offset">{{iocInfo.article.ioc_count}}</td>
         </tr>
+        <tr>
+          <td>IOC environment</td>
+          <td class="offset">{{iocInfo.ioc.ioc_around || '—' }}</td>
+        </tr>
+        <tr>
+          <td (click)="getAllArticle(iocInfo.ioc.article_hash)" class="cursor-pointer">More...</td>
+          <td class="offset"></td>
+        </tr>
       </tbody>
     </table>
   </div>
+  <div *ngIf="showArticle" class="article" @tableFade>{{ article }}</div>
 </div>

@@ -10,6 +10,10 @@ export interface Article {
   year: number;
 }
 
+export interface ArticleBody {
+  article: string;
+}
+
 export interface FullIOCInfo {
   article: Article;
   ioc: IOC;

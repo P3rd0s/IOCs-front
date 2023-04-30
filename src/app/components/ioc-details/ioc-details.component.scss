@@ -1,15 +1,18 @@
 .ioc {
-  height: 100%;
+  min-height: 100%;
   padding: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  overflow: hidden;
 }
 
 .grid-list {
   width: 100%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .grid-tile {
@@ -60,4 +63,18 @@
       padding-left: 43px;
     }
   }
+}
+
+.article {
+  color: white;
+  font-size: 18px;
+  line-height: 24px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 43px;
+  flex: 1 1 auto;
+  white-space: pre-line;
+
+  background: linear-gradient(163deg, rgba(0,0,0,1) 0%, rgba(103,35,89,1) 80%, rgba(81,45,168,1) 100%);
+  border-radius: 5px;
 }
