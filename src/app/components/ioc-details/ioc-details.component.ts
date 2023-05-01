@@ -7,7 +7,6 @@ import {IOC_TYPE_GRADIENT, IOC_TYPE_ICON} from "../../shared/constants/ioc-types
 import {tileFromBottom, tileFromLeft, tileFromRight, tileFromTop} from "./animations/ioc-tiles.animation";
 import {tableFadeScale} from "./animations/article-table.animation";
 import {ArticlesService} from "../../shared/services/articles.service";
-import {NO_FILES} from "../../shared/constants/no-files.constant";
 
 interface Tile {
   color: string;
@@ -24,7 +23,6 @@ interface Tile {
 })
 export class IocDetailsComponent implements OnInit {
   readonly IOC_TYPE_ICON = IOC_TYPE_ICON;
-  readonly NO_FILES = NO_FILES;
 
   tiles: Tile[] = [];
   iocInfo: FullIOCInfo | null = null;
@@ -73,7 +71,7 @@ export class IocDetailsComponent implements OnInit {
     if (this.article) {
       return;
     }
-    if (this.iocInfo?.article.filename !== NO_FILES) {
+    if (this.iocInfo?.article.filename) {
       this._articlesService.downloadById(id)
         .pipe(takeUntil(this._$destroySubj))
         .subscribe((data) => {
