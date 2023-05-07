@@ -9,11 +9,13 @@
       [@topFade]="index === 1 ? 'readyTop' : ''"
       [@rightFade]="index === 2 ? 'readyRight' : ''"
       [@bottomFade]="index === 3 ? 'readyBottom' : ''"
-      [style.background]="tile.color">
+    >
       <ng-container *ngIf="index === 0; else usualText">
-        <mat-icon>{{ IOC_TYPE_ICON[tile.text] }}</mat-icon>
+        <mat-icon [style.background]="tile.color" class="tile-content">{{ IOC_TYPE_ICON[tile.text] }}</mat-icon>
       </ng-container>
-      <ng-template #usualText>{{tile.text}}</ng-template>
+      <ng-template #usualText>
+        <div [style.background]="tile.color" class="tile-content">{{tile.text}}</div>
+      </ng-template>
     </mat-grid-tile>
   </mat-grid-list>
 
@@ -21,35 +23,45 @@
     <table>
       <tbody>
         <tr>
-          <td>Article title</td>
+          <td>Название статьи:</td>
           <td class="offset">{{iocInfo.article.title}}</td>
         </tr>
         <tr>
-          <td>Publication date</td>
+          <td>Дата публикации:</td>
           <td class="offset">{{iocInfo.article.date}}</td>
         </tr>
         <tr *ngIf="iocInfo?.article?.filename">
-          <td>File name</td>
+          <td>Имя файла:</td>
           <td class="offset">{{iocInfo.article.filename}}</td>
         </tr>
         <tr>
-          <td>Source</td>
-          <td class="offset"><a href="{{ iocInfo.article.link + '#:~:text=' + (iocInfo.ioc.ioc_around | encodeURIComponent) }}" target="_blank">{{iocInfo.article.link}}</a></td>
+          <td>Источник:</td>
+          <td class="offset"><a class="clickable" href="{{ iocInfo.article.link + '#:~:text=' + (iocInfo.ioc.iocs_paragraph | encodeURIComponent) }}" target="_blank">{{iocInfo.article.link}}</a></td>
         </tr>
         <tr>
-          <td>IOCs found in this source</td>
+          <td>Количество индикаторов компрометации в статье:</td>
           <td class="offset">{{iocInfo.article.ioc_count}}</td>
         </tr>
         <tr>
-          <td>IOC environment</td>
-          <td class="offset">{{iocInfo.ioc.ioc_around || '—' }}</td>
+          <td>Отрывок:</td>
+          <td class="offset">{{iocInfo.ioc.iocs_paragraph || '—' }}</td>
         </tr>
         <tr>
-          <td (click)="getAllArticle(iocInfo.ioc.article_hash)" class="cursor-pointer">More...</td>
-          <td class="offset"></td>
+          <td (click)="getArticleContent(iocInfo.ioc.article_hash)" class="cursor-pointer">
+            <div class="clickable">Показать статью целиком</div>
+          </td>
+          <td class="offset bold">
+            <div
+              *ngIf="iocInfo?.article?.filename"
+              class="clickable cursor-pointer"
+              (click)="downloadPdf(iocInfo.ioc.article_hash)"
+            >
+                Скачать PDF
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div *ngIf="showArticle" class="article" @tableFade>{{ article }}</div>
+  <div *ngIf="showArticle" class="article-content" @tableFade>{{ article }}</div>
 </div>

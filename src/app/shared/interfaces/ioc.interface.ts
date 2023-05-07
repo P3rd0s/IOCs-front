@@ -4,6 +4,6 @@ export interface IOC {
   article_hash: string;
   id: string;
   ioc: string;
-  ioc_around?: string;
+  iocs_paragraph?: string;
   type: IOC_TYPE;
 }

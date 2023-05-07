@@ -71,6 +71,43 @@
     }
   }
 
+  .card {
+    &__item {
+      height: auto;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      background: transparent;
+
+      &_fixed {
+        height: 75px;
+      }
+
+      &:hover {
+        background: rgba(81,45,168,0.2);
+      }
+    }
+
+    &__title {
+      text-overflow: ellipsis;
+      max-width: 320px;
+      overflow: hidden;
+    }
+
+    &__description {
+      font-size: 11px;
+      max-width: 450px;
+      word-break: break-word;
+      white-space: break-spaces;
+      margin: 5px 0;
+
+      &_short {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+
   .expanded-list {
     table {
       width: 100%;

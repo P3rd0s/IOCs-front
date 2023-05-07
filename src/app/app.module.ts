@@ -50,7 +50,7 @@ import { EncodeURIComponentPipe } from './shared/pipes/encode-uricomponent.pipe'
     MatInputModule,
     MatGridListModule
   ],
-  providers: [],
+  providers: [EncodeURIComponentPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

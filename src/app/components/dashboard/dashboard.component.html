@@ -15,17 +15,17 @@
       </ngx-charts-pie-chart>
     </div>
     <div class="charts__chart">
-      <button *ngIf="iocsPerYear.length"
-              (click)="iocsPerMonth.length ? iocsPerMonth = [] : iocsPerYear = []"
+      <button *ngIf="stateService.iocsPerYear.length"
+              (click)="stateService.iocsPerMonth.length ? stateService.iocsPerMonth = [] : stateService.iocsPerYear = []"
               mat-button color="accent"
               class="back-btn">Назад
       </button>
-      <div *ngIf="iocsPerMonth.length"
+      <div *ngIf="stateService.iocsPerMonth.length"
            @fadeListIn
            @fadeListOut
            class="charts__month-list">
         <mat-list>
-          <ng-container *ngFor="let listItem of iocsPerMonth">
+          <ng-container *ngFor="let listItem of stateService.iocsPerMonth">
             <mat-list-item [routerLink]="'/ioc/' + listItem.id">
               <mat-icon matListItemIcon color="accent">{{ IOC_TYPE_ICON[listItem.type] }}</mat-icon>
               <div matListItemTitle class="white-text cursor-pointer">{{ listItem.type }}</div>
@@ -37,7 +37,7 @@
       </div>
       <ngx-charts-bar-vertical
         [view]="[715, 460]"
-        [results]="iocsPerYear.length ? iocsPerYear : iocsPerYears"
+        [results]="stateService.iocsPerYear.length ? stateService.iocsPerYear : iocsPerYears"
         [gradient]="true"
         [showGridLines]="false"
         [xAxis]="true"
@@ -51,7 +51,10 @@
   <div class="search">
     <mat-form-field class="search__form" color="primary">
       <mat-label>Поиск...</mat-label>
-      <input matInput type="text" [(ngModel)]="searchQuery">
+      <input matInput type="text" (keyup.enter)="loadByQuery()" [(ngModel)]="stateService.searchQuery">
+      <button matSuffix mat-icon-button aria-label="Clear" *ngIf="stateService.searchQuery" (click)="stateService.searchQuery = ''">
+        <mat-icon>clear</mat-icon>
+      </button>
       <button matSuffix mat-icon-button aria-label="Search" (click)="loadByQuery()">
         <mat-icon>search</mat-icon>
       </button>
@@ -59,7 +62,7 @@
   </div>
 
   <div class="lists">
-    <ng-container *ngFor="let list of selectedIocLists; let index = index">
+    <ng-container *ngFor="let list of stateService.selectedIocLists; let index = index">
       <mat-card
         *ngIf="expandedListIndex === null || index === expandedListIndex"
         [ngClass]="{
@@ -77,15 +80,16 @@
         </mat-card-header>
         <mat-card-content>
           <mat-list [ngClass]="{ 'expanded-list': expandedListIndex === index }">
-            <cdk-virtual-scroll-viewport orientation="vertical" itemSize="50" class="lists__card-viewport">
+            <cdk-virtual-scroll-viewport orientation="vertical" [minBufferPx]="200" [maxBufferPx]="200" itemSize="75" class="lists__card-viewport">
               <ng-container *ngIf="expandedListIndex === index; else cutList">
                 <table>
                   <tbody>
                   <ng-container *cdkVirtualFor="let listItem of (list.iocs.length / 4 | numToArray); let index = index">
                     <tr>
-                      <td *ngFor="let i of (4 | numToArray)">
-                        <mat-list-item [routerLink]="'/ioc/' + list.iocs[index + i].id">
-                          <div class="cursor-pointer">{{ list.iocs[index + i].ioc }}</div>
+                      <td *ngFor="let i of (4 | numToArray); let subindex = index">
+                        <mat-list-item class="card__item card__item_fixed" [routerLink]="'/ioc/' + list.iocs[index + subindex].id">
+                          <div matListItemTitle class="card__title">{{ list.iocs[index + subindex].ioc || stateService.searchQuery }}</div>
+                          <div matListItemLine class="card__description card__description_short">{{ list.iocs[index + subindex].iocs_paragraph?.replaceAll('\n', ' ') }}</div>
                         </mat-list-item>
                       </td>
                     </tr>
@@ -94,12 +98,29 @@
                 </table>
               </ng-container>
               <ng-template #cutList>
-                <ng-container *cdkVirtualFor="let listItem of list.iocs.slice(0, 8)">
-                  <mat-list-item [routerLink]="'/ioc/' + listItem.id">
-                    <div class="cursor-pointer">{{ listItem.ioc }}</div>
-                  </mat-list-item>
-                  <mat-divider></mat-divider>
+                <ng-container *ngIf="list.iocs?.length !== 0; else empty">
+                  <ng-container *cdkVirtualFor="let listItem of list.iocs.slice(0, 8)">
+                    <ng-container *ngIf="listItem.id; else searchedData">
+                      <mat-list-item [routerLink]="'/ioc/' + listItem.id" class="card__item">
+                        <div matListItemTitle class="card__title">{{ listItem.ioc }}</div>
+                        <div matListItemLine class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
+                      </mat-list-item>
+                    </ng-container>
+                    <ng-template #searchedData>
+                      <mat-list-item (click)="getArticleContent(listItem)" class="card__item">
+                        <div matListItemTitle class="card__title">{{ stateService.searchQuery }}</div>
+                        <div matListItemLine class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
+                      </mat-list-item>
+                    </ng-template>
+                    <mat-divider></mat-divider>
+                  </ng-container>
                 </ng-container>
+                <ng-template #empty>
+                  <mat-list-item class="card__item">
+                    <div matListItemTitle class="card__title">Нет результатов</div>
+                    <div matListItemLine class="card__description">По Вашему запросу ничего не найдено</div>
+                  </mat-list-item>
+                </ng-template>
               </ng-template>
             </cdk-virtual-scroll-viewport>
           </mat-list>

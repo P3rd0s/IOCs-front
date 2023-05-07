@@ -47,19 +47,19 @@ export class IocDetailsComponent implements OnInit {
 
       this.tiles.push({text: iocInfo.ioc.type, cols: 1, rows: 2, color: IOC_TYPE_GRADIENT[iocInfo.ioc.type]});
       this.tiles.push({
-        text: 'IOC ID: ' + iocInfo.ioc.id,
+        text: 'IoC ID: ' + iocInfo.ioc.id,
         cols: 1,
         rows: 1,
         color: 'linear-gradient(209deg, rgba(201,130,22,1) 0%, rgba(255,215,64,1) 100%)'
       });
       this.tiles.push({
-        text: 'TYPE: ' + iocInfo.ioc.type,
+        text: 'Тип: ' + iocInfo.ioc.type,
         cols: 2,
         rows: 1,
         color: 'linear-gradient(157deg, rgba(81,45,168,1) 0%, rgba(126,89,215,1) 100%)'
       });
       this.tiles.push({
-        text: 'VALUE: ' + iocInfo.ioc.ioc,
+        text: 'Значение: ' + iocInfo.ioc.ioc,
         cols: 3,
         rows: 1,
         color: 'linear-gradient(165deg, rgba(10,98,5,1) 0%, rgba(100,222,84,1) 100%)'
@@ -67,12 +67,9 @@ export class IocDetailsComponent implements OnInit {
     });
   }
 
-  getAllArticle(id: string): void {
-    if (this.article) {
-      return;
-    }
+  downloadPdf(id: string): void {
     if (this.iocInfo?.article.filename) {
-      this._articlesService.downloadById(id)
+      this._articlesService.downloadPDFById(id)
         .pipe(takeUntil(this._$destroySubj))
         .subscribe((data) => {
           const downloadURL = URL.createObjectURL(data);
@@ -83,13 +80,18 @@ export class IocDetailsComponent implements OnInit {
           URL.revokeObjectURL(downloadURL);
           link.remove();
         });
-    } else {
-      this._articlesService.getById(id)
-        .pipe(takeUntil(this._$destroySubj))
-        .subscribe((data) => {
-          this.article = data.article;
-          this.showArticle = true;
-        })
     }
+  }
+
+  getArticleContent(id: string): void {
+    if (this.article) {
+      return;
+    }
+    this._articlesService.getDataById(id)
+      .pipe(takeUntil(this._$destroySubj))
+      .subscribe((data) => {
+        this.article = data.article;
+        this.showArticle = true;
+      })
   }
 }
