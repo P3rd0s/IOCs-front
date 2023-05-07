@@ -52,7 +52,8 @@
     <mat-form-field class="search__form" color="primary">
       <mat-label>Поиск...</mat-label>
       <input matInput type="text" (keyup.enter)="loadByQuery()" [(ngModel)]="stateService.searchQuery">
-      <button matSuffix mat-icon-button aria-label="Clear" *ngIf="stateService.searchQuery" (click)="stateService.searchQuery = ''">
+      <button matSuffix mat-icon-button aria-label="Clear" *ngIf="stateService.searchQuery"
+              (click)="stateService.searchQuery = ''">
         <mat-icon>clear</mat-icon>
       </button>
       <button matSuffix mat-icon-button aria-label="Search" (click)="loadByQuery()">
@@ -80,17 +81,32 @@
         </mat-card-header>
         <mat-card-content>
           <mat-list [ngClass]="{ 'expanded-list': expandedListIndex === index }">
-            <cdk-virtual-scroll-viewport orientation="vertical" [minBufferPx]="200" [maxBufferPx]="200" itemSize="75" class="lists__card-viewport">
+            <cdk-virtual-scroll-viewport orientation="vertical" [minBufferPx]="200" [maxBufferPx]="200" itemSize="75"
+                                         class="lists__card-viewport">
               <ng-container *ngIf="expandedListIndex === index; else cutList">
                 <table>
                   <tbody>
                   <ng-container *cdkVirtualFor="let listItem of (list.iocs.length / 4 | numToArray); let index = index">
                     <tr>
                       <td *ngFor="let i of (4 | numToArray); let subindex = index">
-                        <mat-list-item class="card__item card__item_fixed" [routerLink]="'/ioc/' + list.iocs[index + subindex].id">
-                          <div matListItemTitle class="card__title">{{ list.iocs[index + subindex].ioc || stateService.searchQuery }}</div>
-                          <div matListItemLine class="card__description card__description_short">{{ list.iocs[index + subindex].iocs_paragraph?.replaceAll('\n', ' ') }}</div>
-                        </mat-list-item>
+                        <ng-container *ngIf="list.iocs[index + subindex].id; else searchedListData">
+                          <mat-list-item class="card__item card__item_fixed"
+                                         [routerLink]="'/ioc/' + list.iocs[index + subindex].id">
+                            <div matListItemTitle
+                                 class="card__title">{{ list.iocs[index + subindex].ioc || stateService.searchQuery }}</div>
+                            <div matListItemLine
+                                 class="card__description card__description_short">{{ list.iocs[index + subindex].iocs_paragraph?.replaceAll('\n', ' ') }}</div>
+                          </mat-list-item>
+                        </ng-container>
+                        <ng-template #searchedListData>
+                          <mat-list-item class="card__item card__item_fixed"
+                                         (click)="getArticleContent(list.iocs[index + subindex])">
+                            <div matListItemTitle
+                                 class="card__title">{{ list.iocs[index + subindex].ioc || stateService.searchQuery }}</div>
+                            <div matListItemLine
+                                 class="card__description card__description_short">{{ list.iocs[index + subindex].iocs_paragraph?.replaceAll('\n', ' ') }}</div>
+                          </mat-list-item>
+                        </ng-template>
                       </td>
                     </tr>
                   </ng-container>
@@ -103,13 +119,15 @@
                     <ng-container *ngIf="listItem.id; else searchedData">
                       <mat-list-item [routerLink]="'/ioc/' + listItem.id" class="card__item">
                         <div matListItemTitle class="card__title">{{ listItem.ioc }}</div>
-                        <div matListItemLine class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
+                        <div matListItemLine
+                             class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
                       </mat-list-item>
                     </ng-container>
                     <ng-template #searchedData>
                       <mat-list-item (click)="getArticleContent(listItem)" class="card__item">
                         <div matListItemTitle class="card__title">{{ stateService.searchQuery }}</div>
-                        <div matListItemLine class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
+                        <div matListItemLine
+                             class="card__description">{{ listItem.iocs_paragraph.replaceAll('\n', ' ') }}</div>
                       </mat-list-item>
                     </ng-template>
                     <mat-divider></mat-divider>
