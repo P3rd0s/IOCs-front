@@ -2,6 +2,7 @@
   <div class="charts">
     <div class="charts__pie">
       <ngx-charts-pie-chart
+        legendTitle="Типы индикаторов коспрометации"
         [view]="[765, 400]"
         [scheme]="colorScheme"
         [legendPosition]="legendPosition"
@@ -40,9 +41,13 @@
         [results]="stateService.iocsPerYear.length ? stateService.iocsPerYear : iocsPerYears"
         [gradient]="true"
         [showGridLines]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
         [xAxis]="true"
         [yAxis]="true"
         scheme="fire"
+        yAxisLabel="Количество найденных индикаторов"
+        [xAxisLabel]="stateService.iocsPerYear.length ? 'Месяц' : 'Год'"
         (select)="onYearSelected($event)">
       </ngx-charts-bar-vertical>
     </div>
